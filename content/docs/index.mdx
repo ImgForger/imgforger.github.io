@@ -1,113 +1,55 @@
 ---
-title: Imgforge
+title: Introduction
+description: High-performance image processing server built in Rust
 ---
 
-imgforge is a fast, secure image proxy and transformation server built in Rust on top of libvips and Axum. It sits between your applications, a CDN, and the original image storage to resize, crop, convert formats, apply effects, and cache results on the fly.
+import ArchitectureFlow from '@/components/architecture-flow';
 
-- Performance-first: libvips and an async architecture deliver low latency and high throughput.
-- Safe by default: signed URLs, optional bearer auth, and strict guards protect your origins.
-- Operationally ready: metrics, structured logs, health endpoints, and predictable resource use.
-- Familiar semantics: URL format is largely compatible with imgproxy, easing migrations.
+# Meet Imgforge
 
-## What problems imgforge solves
+**Imgforge** is the high-performance image proxy that sits between your users and your storage. It transforms images on the fly, resizing, cropping, and optimizing them in milliseconds, so you never have to manually resize picture or generate thumbnails again.
 
-- Resize, crop, and convert images on demand without pre-generating variants.
-- Reduce bandwidth and speed up pages by delivering modern formats (WebP/AVIF/HEIC) and right-sized images.
-- Offload image IO and processing from your app servers to a dedicated service.
-- Front a slow or rate-limited origin with a cacheable, CDN-friendly image layer.
+Built with **Rust** and **libvips**, it delivers blazing speed and rock-solid security, serving optimized WebP and AVIF images automatically.
 
-## High-level architecture
+## How It Works
 
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                       imgforge Architecture                            │
-└────────────────────────────────────────────────────────────────────────┘
+Imgforge acts as a smart layer in your stack. Instead of serving heavy originals, your app requests a transformed version. Imgforge processes it instantly, caches the result, and delivers it to the user.
 
-  ┌─────────┐                                              ┌──────────────┐
-  │   CDN   │◀────── Response (cached, global) ────────────│  End Users   │
-  └────┬────┘                                              └──────┬───────┘
-       │                                                          │
-       │ Cache miss or bypass                                     │
-       │                                                          │
-       ▼                                                          │
-  ┌───────────────────────────────────────────────────────────────┘
-  │
-  ▼
-┌────────────────────────────────────────────────────────────────────┐
-│                           imgforge                                 │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │  1. Verify HMAC signature (unless unsafe mode)               │  │
-│  └───────────────────────────┬──────────────────────────────────┘  │
-│                              │                                     │
-│  ┌───────────────────────────▼──────────────────────────────────┐  │
-│  │  2. Check cache (Memory/Disk/Hybrid) ───────┐                │  │
-│  │                                       Hit?  │                │  │
-│  └───────────────────────────┬─────────────────┘                │  │
-│                              │ Miss                             │  │
-│  ┌───────────────────────────▼──────────────────────────────────┐  │
-│  │  3. Download source image (size/MIME validation)             │  │
-│  └───────────────────────────┬──────────────────────────────────┘  │
-│                              │                                     │
-│  ┌───────────────────────────▼──────────────────────────────────┐  │
-│  │  4. libvips Processing Pipeline:                             │  │
-│  │     • Resize, crop, rotate                                   │  │
-│  │     • Effects (blur, sharpen, pixelate)                      │  │
-│  │     • Watermarking                                           │  │
-│  │     • Format conversion (JPEG/WebP/AVIF/PNG)                 │  │
-│  └───────────────────────────┬──────────────────────────────────┘  │
-│                              │                                     │
-│  ┌───────────────────────────▼──────────────────────────────────┐  │
-│  │  5. Store in cache & serve response                          │  │
-│  └──────────────────────────────────────────────────────────────┘  │
-│                                                                    │
-│  ┌──────────────────────────────────────────────────────────────┐  │
-│  │  Metrics: /metrics (Prometheus)                              │  │
-│  └──────────────────────────────────────────────────────────────┘  │
-└────────────────────────────────────────────────────────────────────┘
-       │                                  ▲
-       │ Fetch original                   │
-       ▼                                  │
-  ┌─────────────────────┐                 │
-  │  Origin Storage     │─────────────────┘
-  │  (S3, HTTP, etc.)   │
-  └─────────────────────┘
-```
+<ArchitectureFlow />
 
-1. A client requests a transformation URL (usually generated by your app).
-2. imgforge verifies the HMAC signature (unless explicitly allowed to use `unsafe`).
-3. The server downloads the source image with size and MIME checks.
-4. libvips applies the requested operations (resize, crop, blur/sharpen, watermarking, format conversion, etc.).
-5. Results are served and optionally cached (memory, disk, or hybrid) for reuse.
+## Forge Image With Imgforge
 
-## Security model at a glance
+### 🚀 **Performance First**
+Written in **Rust** and built on the asynchronous **Axum** framework, imgforge is designed for low latency and high throughput. It uses **libvips**, which consumes far less memory than standard alternatives like ImageMagick.
 
-- HMAC-signed URLs are required by default; disable only for local development.
-- Optional bearer authentication endpoints.
-- Inbound fetch safeguards: allowed MIME types, maximum source size, and pixel resolution caps.
-- Rate limiting and per-request guards stop abuse before it reaches your origin.
+### 🛡️ **Secure by Design**
+We take security seriously.
+- **HMAC Signatures:** Every URL is signed to prevent tampering and denial-of-service attacks.
+- **Strict Validation:** Checks file types and dimensions before processing begins.
+- **Rate Limiting:** Built-in guards to protect your infrastructure.
 
-## Caching and performance
+### 💾 **Smart Caching**
+Why process the same image twice? Imgforge includes **Foyer**, a hybrid caching engine that intelligently manages hot items in memory and warm items on disk.
 
-- Pluggable caches (memory, disk, or hybrid via Foyer) reduce repeated work.
-- DPR-aware rendering and format negotiation minimize bytes on the wire.
-- Tunable concurrency controls keep tail latencies predictable under load.
+### ☁️ **Production Ready**
+From comprehensive **Prometheus metrics** to structured JSON logs, imgforge gives you full visibility into your image pipeline. It's container-native and ready for Kubernetes.
 
-## What imgforge is not
+## Solves Real Problems
 
-- A general file server or CDN by itself. Pair it with a CDN or reverse proxy for TLS, caching, and global distribution.
-- A digital asset management system. Use your existing storage and pipelines; imgforge focuses on transformation and delivery.
+| Problem | The Imgforge Solution |
+| :--- | :--- |
+| **Storage Bloat** | Store only the original high-res image. Generate variants on demand. |
+| **Slow Load Times** | Automatically convert JPEGs/PNGs to modern, lightweight **WebP** or **AVIF**. |
+| **Complex Pipelines** | Replace brittle Lambda functions and batch jobs with a single, robust binary. |
+| **Security Risks** | Prevent "pixel flood" attacks and unverified uploads with signed URLs. |
 
-## Special thanks
+## Get Started
 
-imgforge is inspired by [imgproxy](https://github.com/imgproxy/imgproxy). So special thanks to the authors for their work!
+Ready to transform your image workflow?
 
-Many thanks to the following open source projects that make imgforge possible:
+- **[Installation](/docs/1_installation)**: Run it in Docker in seconds.
+- **[Quickstart](/docs/2_quickstart)**: Process your first image.
+- **[Configuration](/docs/3_configuration)**: Tune it for your needs.
 
-- [libvips](https://github.com/libvips/libvips) for its powerful image processing library.
-- [Foyer](https://github.com/josh-burton/foyer) for its fast, memory-efficient hybrid cache.
-- [Axum](https://github.com/tokio-rs/axum) for its fast, async web framework.
-- [Tokio](https://github.com/tokio-rs/tokio) for its async runtime.
-- [Serde](https://github.com/serde-rs/serde) for its powerful data serialization framework.
-- [Hyper](https://github.com/hyperium/hyper) for its HTTP client.
-- [Tokio-stream](https://github.com/tokio-rs/tokio/tree/master/tokio-stream) for its streaming abstractions.
-- [Tokio-util](https://github.com/tokio-rs/tokio/tree/master/tokio-util) for its utilities.
+---
+*Inspired by the excellent [imgproxy](https://github.com/imgproxy/imgproxy).*
