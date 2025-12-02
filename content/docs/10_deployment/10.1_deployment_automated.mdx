@@ -112,8 +112,8 @@ The script creates a deployment with these defaults:
 # Port Configuration
 IMGFORGE_PORT=3000          # Main HTTP service
 PROMETHEUS_PORT=9090        # Prometheus UI (if enabled)
-GRAFANA_PORT=3001          # Grafana UI (if enabled)
-METRICS_PORT=9000          # Metrics endpoint (if enabled)
+GRAFANA_PORT=3001           # Grafana UI (if enabled)
+METRICS_PORT=9000           # Metrics endpoint (if enabled)
 
 # Logging
 IMGFORGE_LOG_LEVEL=info
@@ -133,14 +133,14 @@ All configuration files are stored in `~/.imgforge/`:
 
 ```
 ~/.imgforge/
-├── .env                          # Environment variables
-├── docker-compose.yml            # Docker Compose configuration
+├── .env                            # Environment variables
+├── docker-compose.yml              # Docker Compose configuration
 ├── prometheus/
-│   └── prometheus.yml           # Prometheus scrape config
+│   └── prometheus.yml              # Prometheus scrape config
 ├── grafana-dashboards/
 │   ├── dashboard-provisioning.yml  # Dashboard auto-provisioning config
 │   └── imgforge-dashboard.json     # Pre-built imgforge dashboard
-└── grafana-datasources.yml      # Grafana Prometheus datasource
+└── grafana-datasources.yml         # Grafana Prometheus datasource
 ```
 
 ## Error Handling
@@ -795,8 +795,3 @@ sudo dnf remove grafana
 | **Log Management**     | Docker logs                                | systemd journald                   |
 | **Service Management** | docker compose                             | systemctl                          |
 | **Best For**           | Quick deployment, container infrastructure | Bare metal, no Docker environments |
-
-## Support
-
-- **Documentation**: https://imgforger.github.io/
-- **Issues**: https://github.com/ImgForger/imgforge/issues
