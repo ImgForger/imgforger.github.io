@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="bolt-grad" x1="150" y1="0" x2="350" y2="512" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FCD34D" /> <!-- Amber-300 -->
+      <stop offset="50%" stop-color="#F59E0B" /> <!-- Amber-500 -->
+      <stop offset="100%" stop-color="#D97706" /> <!-- Amber-600 -->
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Circle (Optional, good for favicon) -->
+  <!-- <circle cx="256" cy="256" r="256" fill="#111827" /> -->
+
+  <!-- Anvil Base -->
+  <path d="M112 416H400V448H112V416Z" fill="#374151"/>
+  
+  <!-- Anvil Body -->
+  <path d="M160 416C160 356 180 316 220 296V224H292V296C332 316 352 356 352 416H160Z" fill="#4B5563"/>
+  
+  <!-- Anvil Top Plate -->
+  <rect x="128" y="224" width="256" height="32" rx="4" fill="#1F2937"/>
+
+  <!-- Lightning Bolt (Striking) -->
+  <path d="M320 32L240 192H304L224 352L368 160H288L320 32Z" fill="url(#bolt-grad)" stroke="white" stroke-width="6" stroke-linejoin="round" filter="url(#glow)"/>
+  
+</svg>

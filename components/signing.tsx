@@ -176,10 +176,14 @@ export default function SigningDemo() {
     <div className="not-prose my-6 rounded-lg border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-700 dark:bg-slate-900">
       <form className="space-y-4" onSubmit={handleSubmit} noValidate>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+          <label
+            htmlFor="url-input"
+            className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
+          >
             URL path (include processing options)
           </label>
           <input
+            id="url-input"
             type="text"
             name="url"
             autoComplete="off"
@@ -196,10 +200,14 @@ export default function SigningDemo() {
           ) : null}
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+          <label
+            htmlFor="key-input"
+            className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
+          >
             IMGFORGE_KEY (hex)
           </label>
           <input
+            id="key-input"
             type="text"
             name="key"
             autoComplete="off"
@@ -216,10 +224,14 @@ export default function SigningDemo() {
           ) : null}
         </div>
         <div>
-          <label className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200">
+          <label
+            htmlFor="salt-input"
+            className="mb-1 block text-sm font-medium text-slate-700 dark:text-slate-200"
+          >
             IMGFORGE_SALT (hex)
           </label>
           <input
+            id="salt-input"
             type="text"
             name="salt"
             autoComplete="off"
