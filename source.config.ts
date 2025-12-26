@@ -11,6 +11,7 @@ export const docs = defineDocs({
   docs: {
     schema: frontmatterSchema,
     postprocess: {
+      extractLinkReferences: true,
       includeProcessedMarkdown: true,
     },
   },
