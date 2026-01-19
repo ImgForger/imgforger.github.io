@@ -7,10 +7,12 @@ title: Automated Deployment
 ## Available Scripts
 
 ### Docker Deployment
+
 - `deploy.sh` - Deploy imgforge using Docker Compose
 - `uninstall.sh` - Remove Docker-based deployment
 
 ### Systemd Deployment
+
 - `deploy-systemd.sh` - Deploy imgforge as a native systemd service
 - `upgrade-systemd.sh` - Upgrade imgforge to the latest version
 - `uninstall-systemd.sh` - Remove systemd-based deployment
@@ -20,9 +22,11 @@ title: Automated Deployment
 Choose the deployment method that best fits your infrastructure:
 
 ### Option 1: Docker Deployment (Recommended)
+
 Uses Docker and Docker Compose for containerized deployment. Simplest and most portable.
 
 ### Option 2: Systemd Deployment
+
 Installs imgforge as a native systemd service. Best for environments where Docker is not available or not desired.
 
 ---
@@ -73,6 +77,7 @@ The Docker deployment script will:
    - Display access URLs and credentials
 
 ### What's NOT Included (User Responsibility)
+
 - HTTPS/TLS termination (use reverse proxy)
 - Firewall configuration
 - Rate limiting at proxy level
@@ -87,22 +92,22 @@ The Docker deployment script will:
 The script offers four caching strategies:
 
 | Type   | Description                 | Default Capacity | Persistence |
-|--------|-----------------------------|------------------|-------------|
+| ------ | --------------------------- | ---------------- | ----------- |
 | Memory | Fast in-memory cache        | 1000 entries     | No          |
-| Disk   | File-based persistent cache | 10 GB            | Yes         |
-| Hybrid | Memory + Disk combined      | 1000 + 10 GB     | Partial     |
+| Disk   | File-based persistent cache | 2 GB             | Yes         |
+| Hybrid | Memory + Disk combined      | 1000 + 2 GB      | Partial     |
 | None   | No caching                  | -                | -           |
 
 ### Monitoring
 
 If enabled, the script deploys:
 
-| Service    | Port | Credentials | Purpose                    |
-|------------|------|-------------|----------------------------|
-| imgforge   | 3000 | -           | Image processing API       |
-| Metrics    | 9000 | -           | Prometheus metrics         |
-| Prometheus | 9090 | -           | Metrics storage/queries    |
-| Grafana    | 3001 | admin/admin | Visualization dashboards   |
+| Service    | Port | Credentials | Purpose                  |
+| ---------- | ---- | ----------- | ------------------------ |
+| imgforge   | 3000 | -           | Image processing API     |
+| Metrics    | 9000 | -           | Prometheus metrics       |
+| Prometheus | 9090 | -           | Metrics storage/queries  |
+| Grafana    | 3001 | admin/admin | Visualization dashboards |
 
 ## Default Configuration
 
@@ -158,11 +163,13 @@ The script checks for common issues:
 After successful deployment:
 
 1. **Test the service:**
+
    ```bash
    curl http://localhost:3000/status
    ```
 
 2. **View logs:**
+
    ```bash
    docker logs imgforge -f
    ```
@@ -174,19 +181,20 @@ After successful deployment:
      - Look for "ImgForge Monitoring Dashboard" in the dashboard list
 
 4. **Manage the service:**
+
    ```bash
    cd ~/.imgforge
-   
+
    # Restart services
    docker compose restart
-   
+
    # Stop services
    docker compose down
-   
+
    # Update to latest version
    docker compose pull
    docker compose up -d
-   
+
    # View all logs
    docker compose logs -f
    ```
@@ -228,6 +236,7 @@ docker compose up -d
 ### Common Customizations
 
 **Change the port:**
+
 ```bash
 # In .env
 IMGFORGE_BIND=8080
@@ -236,19 +245,22 @@ IMGFORGE_BIND=8080
 ```
 
 **Add rate limiting:**
+
 ```bash
 # In .env
 IMGFORGE_RATE_LIMIT_PER_MINUTE=100
 ```
 
 **Increase cache size:**
+
 ```bash
 # In .env
 IMGFORGE_CACHE_MEMORY_CAPACITY=5000
-IMGFORGE_CACHE_DISK_CAPACITY=53687091200  # 50 GB
+IMGFORGE_CACHE_DISK_CAPACITY=53687091200  # 50 GB (default 2 GB)
 ```
 
 **Enable unsigned URLs (NOT RECOMMENDED for production):**
+
 ```bash
 # In .env
 IMGFORGE_ALLOW_UNSIGNED=true
@@ -322,6 +334,7 @@ Or if you have the script locally:
 ```
 
 The script will:
+
 - Stop and remove all imgforge containers
 - Remove Docker volumes
 - Remove configuration files
@@ -353,7 +366,7 @@ docker rmi grafana/grafana:latest
 
 - Linux distribution (Ubuntu, Debian, CentOS, RHEL, etc.)
 - 2 GB RAM minimum (4 GB recommended)
-- 10 GB free disk space (for caching)
+- 2 GB free disk space (for caching)
 - Internet connection (for Docker image download)
 - `curl` or `wget` (for running the script)
 
@@ -484,6 +497,7 @@ sudo journalctl -u grafana-server -f
 To modify the configuration after deployment:
 
 1. Edit the environment file:
+
    ```bash
    sudo nano /etc/imgforge/imgforge.env
    ```
@@ -496,6 +510,7 @@ To modify the configuration after deployment:
 ### Common Configuration Changes
 
 **Change the port:**
+
 ```bash
 # In /etc/imgforge/imgforge.env
 IMGFORGE_BIND=8080
@@ -505,6 +520,7 @@ sudo systemctl restart imgforge
 ```
 
 **Add rate limiting:**
+
 ```bash
 # In /etc/imgforge/imgforge.env
 IMGFORGE_RATE_LIMIT_PER_MINUTE=100
@@ -514,16 +530,18 @@ sudo systemctl restart imgforge
 ```
 
 **Increase cache size:**
+
 ```bash
 # In /etc/imgforge/imgforge.env
 IMGFORGE_CACHE_MEMORY_CAPACITY=5000
-IMGFORGE_CACHE_DISK_CAPACITY=53687091200  # 50 GB
+IMGFORGE_CACHE_DISK_CAPACITY=53687091200  # 50 GB (default 2 GB)
 
 # Restart the service
 sudo systemctl restart imgforge
 ```
 
 **Enable unsigned URLs (NOT RECOMMENDED for production):**
+
 ```bash
 # In /etc/imgforge/imgforge.env
 IMGFORGE_ALLOW_UNSIGNED=true
@@ -550,6 +568,7 @@ cd /path/to/deployment
 ```
 
 The upgrade script will:
+
 - Check for available updates
 - Create a backup of the current binary
 - Download and install the latest version
@@ -723,6 +742,7 @@ Or if you have it locally:
 ```
 
 The script will:
+
 - Stop and disable all services
 - Remove systemd service files
 - Remove binaries
@@ -773,7 +793,7 @@ sudo dnf remove grafana
 - Linux distribution with systemd (Ubuntu 16.04+, Debian 8+, CentOS 7+, RHEL 7+, Fedora, etc.)
 - Architecture: x86_64 (amd64) or aarch64/arm64
 - 2 GB RAM minimum (4 GB recommended)
-- 10 GB free disk space minimum (for caching and monitoring data)
+- 2 GB free disk space minimum (for caching and monitoring data)
 - Internet connection (for downloading binaries and dependencies)
 - `curl` or `wget` (for running the script)
 - Sufficient privileges to use `sudo`
@@ -784,7 +804,7 @@ sudo dnf remove grafana
 ## Comparison: Docker vs Systemd
 
 | Feature                | Docker Deployment                          | Systemd Deployment                 |
-|------------------------|--------------------------------------------|------------------------------------|
+| ---------------------- | ------------------------------------------ | ---------------------------------- |
 | **Installation Time**  | Fast (~2-5 minutes)                        | Fast (~3-7 minutes)                |
 | **Disk Space**         | ~500 MB (images)                           | ~100 MB (binary + libs)            |
 | **Dependencies**       | Docker only                                | libvips only                       |
