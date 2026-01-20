@@ -11,22 +11,10 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import LatestTagBadge from "@/components/LatestTagBadge";
 import type { ReactNode } from "react";
 
-async function getLatestTag() {
-  const res = await fetch(
-    "https://api.github.com/repos/ImgForger/imgforge/tags",
-    {
-      next: { revalidate: 3600 },
-    },
-  );
-  const tags = await res.json();
-  return tags[0]?.name || "v0.9.0";
-}
-
 export default async function HomePage() {
-  const latestTag = await getLatestTag();
-
   return (
     <main className="flex flex-col min-h-screen bg-fd-background overflow-x-hidden">
       {/* Hero Section */}
@@ -39,7 +27,7 @@ export default async function HomePage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-fd-primary opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-fd-primary"></span>
               </span>
-              {`${latestTag} is now available`}
+              <LatestTagBadge fallbackTag="v0.9.0" />
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-fd-foreground to-fd-foreground/70 mb-6">
               Image Processing <br />
