@@ -3,13 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 
 type LatestTagBadgeProps = {
-  fallbackTag: string;
+  className?: string;
 };
 
-export default function LatestTagBadge({ fallbackTag }: LatestTagBadgeProps) {
-  const [latestTag, setLatestTag] = useState(fallbackTag);
+export default function LatestTagBadge({ className }: LatestTagBadgeProps) {
+  const [latestTag, setLatestTag] = useState<string | null>(null);
   const [isFading, setIsFading] = useState(false);
-  const latestTagRef = useRef(fallbackTag);
+  const latestTagRef = useRef<string | null>(null);
 
   useEffect(() => {
     let isActive = true;
@@ -47,11 +47,19 @@ export default function LatestTagBadge({ fallbackTag }: LatestTagBadgeProps) {
     };
   }, []);
 
+  if (!latestTag) {
+    return (
+      <span className={`animate-pulse text-fd-primary/70 ${className ?? ""}`}>
+        Checking latest release...
+      </span>
+    );
+  }
+
   return (
     <span
       className={`transition-opacity duration-200 ${
         isFading ? "opacity-0" : "opacity-100"
-      }`}
+      } ${className ?? ""}`}
     >
       {`${latestTag} is now available`}
     </span>

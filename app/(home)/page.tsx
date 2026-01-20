@@ -27,7 +27,7 @@ export default async function HomePage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-fd-primary opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-fd-primary"></span>
               </span>
-              <LatestTagBadge fallbackTag="v0.9.0" />
+              <LatestTagBadge />
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-fd-foreground to-fd-foreground/70 mb-6">
               Image Processing <br />
